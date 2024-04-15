@@ -1,7 +1,7 @@
 def call(Map config = [:]){
     nodejs('node-20'){
         withSonarQubeEnv(config.installationName){
-            sh """#!/bin/bash
+            bat """
             cd server
             sonar-scanner -Dsonar.projectKey=inotebook-backend -Dsonar.projectName=inotebook-backend -Dsonar.sources=.
             """
