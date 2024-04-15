@@ -34,7 +34,7 @@ def call(Map config = [:]){
         DIGEST=\$(docker image inspect --format='{{index .RepoDigests 0}}' ${config.imageName} | awk -F@ '{print \$2}') 
         echo \$DIGEST
 
-        helm upgrade --install ${config.releaseName} ${chartDir} --set image.digest=\$DIGEST --values values.yaml
+        helm upgrade --install --namespace jenkins ${config.releaseName} ${chartDir} --set image.digest=\$DIGEST --values values.yaml
         """
     }
 }
