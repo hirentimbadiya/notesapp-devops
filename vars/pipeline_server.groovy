@@ -1,8 +1,7 @@
 def call(Map config = [:]){
     withSonarQubeEnv(config.installationName){
-        sh """#!/bin/bash
+        sh """
         cd server
-        pwd
         sonar-scanner -Dsonar.projectKey=inotebook-backend -Dsonar.projectName=inotebook-backend -Dsonar.sources=.
         """
     }
