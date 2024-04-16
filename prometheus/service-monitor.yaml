@@ -1,0 +1,16 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: prometheus-svc-monitor
+  namespace: jenkins
+spec:
+  endpoints:
+    - interval: 15s
+      port: metrics
+      scrapeTimeout: 14s
+  namespaceSelector:
+    matchNames:
+      - jenkins
+  selector:
+    matchLabels:
+      app: notesapp-backend

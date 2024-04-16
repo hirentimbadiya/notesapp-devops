@@ -11,6 +11,9 @@ spec:
       metadata:
         labels:
           app: {{ .Values.service.name }}
+        annotations:
+          prometheus.io/scrape: "true"
+          prometheus.io/port: "3001"
       spec:
         containers:
         - name: {{ .Values.service.name }}
