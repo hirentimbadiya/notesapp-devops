@@ -19,7 +19,7 @@ def call(Map config = [:]){
     }
 
      withKubeConfig(caCertificate: '', clusterName: 'gke_gcp-learning-417116_us-central1-c_main-cluster', contextName: '', credentialsId: 'k8s-cred', namespace: 'jenkins', restrictKubeConfigAccess: true, serverUrl: 'https://35.226.254.176') {
-        def chartDir = "helmChart-Server"
+        def chartDir = "../helmChart-Server"
         def chart = libraryResource "helmChart-Server/Chart.yaml"
         def deployment = libraryResource "helmChart-Server/templates/deployment.yaml"
         def service = libraryResource "helmChart-Server/templates/service.yaml"
