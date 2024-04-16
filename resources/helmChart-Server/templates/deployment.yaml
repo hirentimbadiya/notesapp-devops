@@ -2,6 +2,8 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: {{ .Values.service.name }}
+  labels:
+    app: {{ .Values.service.name }}
 spec:
     replicas: {{ .Values.replicaCount }}   
     selector:
