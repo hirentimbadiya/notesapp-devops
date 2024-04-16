@@ -1,10 +1,10 @@
 def call(Map config = [:]){
-    // withSonarQubeEnv(config.installationName){
-    //     bat """
-    //     cd server
-    //     sonar-scanner -Dsonar.projectKey=inotebook-backend -Dsonar.projectName=inotebook-backend -Dsonar.sources=.
-    //     """
-    // }
+    withSonarQubeEnv(config.installationName){
+        bat """
+        cd server
+        sonar-scanner -Dsonar.projectKey=inotebook-backend -Dsonar.projectName=inotebook-backend -Dsonar.sources=.
+        """
+    }
 
     withCredentials([string(credentialsId: 'dockerhub', variable: 'dockerhub_password')]) {
         sh """#!/bin/bash
