@@ -24,3 +24,8 @@ spec:
               secretKeyRef:
                 name: {{ .Values.secrets.mongo.secretName }}
                 key: {{ .Values.secrets.mongo.key }}
+          - name: {{ .Values.secrets.jwt.envName }}
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Values.secrets.jwt.secretName }}
+                key: {{ .Values.secrets.jwt.key }}
