@@ -5,17 +5,16 @@ def call(Map config = [:]){
         sonar-scanner -Dsonar.projectKey=inotebook-backend -Dsonar.projectName=inotebook-backend -Dsonar.sources=.
         """
     }
-
+    
     withCredentials([string(credentialsId: 'sonarqube-api-token', variable: 'sonarQubeApiToken')]) {
         sh '''#!/bin/bash
-        response=\$(curl -u \${sonarQubeApiToken}: "http://localhost:9000/api/issues/search?componentKeys=${config.releaseName}&types=VULNERABILITY&statuses=OPEN")
-        issues=\$(echo \$reponse | jq '.issues | length')
-        echo \$issues
-        if [ \$issues -gt \${0} ];
-        then
-            echo "Error: Found a VULNERABILITY!. Failing the Build."
-            exit 1
-        fi
+            response=$(curl -u ${sonarQubeApiToken}: "http://localhost:9000/api/issues/search?componentKeys=inote-backend&types=VULNERABILITY&statuses=OPEN")
+            issues=$(echo $response | jq '.issues | length' | tr -d '"')
+            echo "Number of issues: $issues"
+            if [ -n "$issues" ] && [ "$issues" -gt 0 ]; then
+                echo "Error: Found a VULNERABILITY!. Failing the Build."
+                exit 1
+            fi
         '''
     }
 
@@ -31,7 +30,7 @@ def call(Map config = [:]){
         """
     }
 
-     withKubeConfig(caCertificate: '', clusterName: 'gke_gcp-learning-417116_us-central1-c_main-cluster', contextName: '', credentialsId: 'k8s-cred', namespace: 'jenkins', restrictKubeConfigAccess: true, serverUrl: 'https://35.226.254.176') {
+    withKubeConfig(caCertificate: '', clusterName: 'gke_gcp-learning-417116_us-central1-c_main-cluster', contextName: '', credentialsId: 'k8s-cred', namespace: 'jenkins', restrictKubeConfigAccess: true, serverUrl: 'https://35.226.254.176') {
         def chartDir = "../helmChart-Server"
         def chart = libraryResource "helmChart-Server/Chart.yaml"
         def deployment = libraryResource "helmChart-Server/templates/deployment.yaml"
