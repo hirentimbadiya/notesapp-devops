@@ -5,7 +5,7 @@ def call(Map config = [:]){
         sonar-scanner -Dsonar.projectKey=inotebook-backend -Dsonar.projectName=inotebook-backend -Dsonar.sources=.
         """
     }
-    
+
     withCredentials([string(credentialsId: 'sonarqube-api-token', variable: 'sonarQubeApiToken')]) {
         sh '''#!/bin/bash
             response=$(curl -u ${sonarQubeApiToken}: "http://localhost:9000/api/issues/search?componentKeys=inote-backend&types=VULNERABILITY&statuses=OPEN")
@@ -35,11 +35,12 @@ def call(Map config = [:]){
         def chart = libraryResource "helmChart-Server/Chart.yaml"
         def deployment = libraryResource "helmChart-Server/templates/deployment.yaml"
         def service = libraryResource "helmChart-Server/templates/service.yaml"
-        
+        def hpa = libraryResource "helmChart-Server/templates/hpa.yaml"
 
         writeFile file: "./helmChart-Server/Chart.yaml", text: chart
         writeFile file: "./helmChart-Server/templates/deployment.yaml", text: deployment
         writeFile file: "./helmChart-Server/templates/service.yaml", text: service
+        writeFile file: "./helmChart-Server/templates/hpa.yaml", text: hpa
 
         sh """#!/bin/bash
         cd server
