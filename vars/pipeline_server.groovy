@@ -4,17 +4,19 @@ def call(Map config = [:]){
         cd server
         sonar-scanner -Dsonar.projectKey=inotebook-backend -Dsonar.projectName=inotebook-backend -Dsonar.sources=.
         """
+    }
 
-        sh '''#!/bin/bash
-        response=\$(curl -u ${config.sonarQubeApiToken} "http://localhost:9000/api/issues/search?componentKeys=${config.releaseName}&types=VULNERABILITY&statuses=OPEN")
+    withCredentials([string(credentialsId: 'sonarqube-api-token', variable: 'sonarQubeApiToken')]) {
+        sh """#!/bin/bash
+        response=\$(curl -u ${sonarQubeApiToken} "http://localhost:9000/api/issues/search?componentKeys=${config.releaseName}&types=VULNERABILITY&statuses=OPEN")
         issues=\$(echo \$reponse | jq '.issues | length')
         echo \$issues
         if [ \$issues -gt ${0} ];
         then
-            echo "Error: found a VULNERABILITY in code! Failing the Build."
+            echo "Error: Found a VULNERABILITY!. Failing the Build."
             exit 1
         fi
-        '''
+        """
     }
 
     withCredentials([string(credentialsId: 'dockerhub', variable: 'dockerhub_password')]) {
