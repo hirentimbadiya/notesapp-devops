@@ -7,16 +7,16 @@ def call(Map config = [:]){
     }
 
     withCredentials([string(credentialsId: 'sonarqube-api-token', variable: 'sonarQubeApiToken')]) {
-        sh """#!/bin/bash
-        response=\$(curl -u ${sonarQubeApiToken} "http://localhost:9000/api/issues/search?componentKeys=${config.releaseName}&types=VULNERABILITY&statuses=OPEN")
+        sh '''#!/bin/bash
+        response=\$(curl -u \${sonarQubeApiToken} "http://localhost:9000/api/issues/search?componentKeys=${config.releaseName}&types=VULNERABILITY&statuses=OPEN")
         issues=\$(echo \$reponse | jq '.issues | length')
         echo \$issues
-        if [ \$issues -gt ${0} ];
+        if [ \$issues -gt \${0} ];
         then
             echo "Error: Found a VULNERABILITY!. Failing the Build."
             exit 1
         fi
-        """
+        '''
     }
 
     withCredentials([string(credentialsId: 'dockerhub', variable: 'dockerhub_password')]) {
