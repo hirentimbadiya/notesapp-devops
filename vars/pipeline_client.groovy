@@ -6,6 +6,18 @@ def call(Map config = [:]){
         """
     }
 
+    withCredentials([string(credentialsId: 'sonarqube-api-token', variable: 'sonarQubeApiToken')]) {
+        sh '''#!/bin/bash
+            response=$(curl -u ${sonarQubeApiToken}: "http://localhost:9000/api/issues/search?componentKeys=inote-frontend&types=VULNERABILITY&statuses=OPEN")
+            issues=$(echo $response | jq '.issues | length' | tr -d '"')
+            echo "Number of issues: $issues"
+            if [ -n "$issues" ] && [ "$issues" -gt 0 ]; then
+                echo "Error: Found a VULNERABILITY!. Failing the Build."
+                exit 1
+            fi
+        '''
+    }
+
     withCredentials([string(credentialsId: 'dockerhub', variable: 'dockerhub_password')]) {
         sh """#!/bin/bash
         cd client
@@ -18,7 +30,7 @@ def call(Map config = [:]){
         """
     }
 
-     withKubeConfig(caCertificate: '', clusterName: 'gke_gcp-learning-417116_us-central1-c_main-cluster', contextName: '', credentialsId: 'k8s-cred', namespace: 'jenkins', restrictKubeConfigAccess: true, serverUrl: 'https://35.226.254.176') {
+    withKubeConfig(caCertificate: '', clusterName: 'gke_gcp-learning-417116_us-central1-c_main-cluster', contextName: '', credentialsId: 'k8s-cred', namespace: 'jenkins', restrictKubeConfigAccess: true, serverUrl: 'https://35.226.254.176') {
         def chartDir = "../helmChart-Client"
         def chart = libraryResource "helmChart-Client/Chart.yaml"
         def deployment = libraryResource "helmChart-Client/templates/deployment.yaml"
